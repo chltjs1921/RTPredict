@@ -635,9 +635,9 @@ class Ui_Mainwindow(object):
 
         ax = self.fig1.subplots()
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = ax + b', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='blue', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = ', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 3, 'Adjusted R square = 0.96', color='blue', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df, pred_df, c="red", s=8)
         # 아웃라이어 제거. 그 후 무엇이 아웃라이어인지 명시할 것(논문과 프로그램 양쪽)
@@ -1541,9 +1541,9 @@ class Ui_Mainwindow(object):
         ax = self.fig1.add_subplot(111)
 
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = ax + b', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='blue', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = ', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 3, 'Adjusted R square = 0.96', color='blue', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df, pred_df, c="red", s=8)
         ax.scatter(exp, pred, c="green", s=60)
