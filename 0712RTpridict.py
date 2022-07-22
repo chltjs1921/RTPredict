@@ -171,8 +171,8 @@ class Ui_Mainwindow(object):
         self.Sketcher.setSizeIncrement(QtCore.QSize(0, 0))
         self.Sketcher.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.Sketcher.setAutoFillBackground(True)
-        self.Sketcher.setUrl(QtCore.QUrl("https://chemdrawdirect.perkinelmer.cloud/js/sample/index.html#"))
-        self.Sketcher.setZoomFactor(0.8)
+        self.Sketcher.setUrl(QtCore.QUrl("http://www.chemspider.com/StructureSearch.aspx"))
+        self.Sketcher.setZoomFactor(1)
         self.Sketcher.setObjectName("Sketcher")
         self.verticalLayout.addWidget(self.Sketcher)
         self.gridLayout_2.addLayout(self.verticalLayout, 0, 0, 2, 2)
@@ -1567,8 +1567,8 @@ class Ui_Mainwindow(object):
             ax.add_artist(ab)
             
         else:
-            x0 = [6, 15, 20]
-            y0 = [17, 25, 5]
+            x0 = [6, 15, 24]
+            y0 = [17, 25, 10]
             for i in range(len(paths)):
                 im = plt.imread(paths[i], format='png')
                 im2 = OffsetImage(im, zoom=1)
