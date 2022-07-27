@@ -623,6 +623,8 @@ class Ui_Mainwindow(object):
 
         df = total.drop(outlier_index, axis=0).reset_index(drop=True)
 
+        #train과 test 나눠서 scatter 그리기
+
         exp_df = df['Experimental_RT']
         pred_df = df['Predicted_RT']
 
@@ -746,7 +748,7 @@ class Ui_Mainwindow(object):
                   'CC[C@@H](C)[C@H](N)C(=O)O': 13.20,
                   'N[C@@H](CS)C(=O)O': 14.12,
                   'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 1.79,
-                  'CNC[C@H](O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
+                  'CNCC(O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
                   'Nc1ccnc(=O)[nH]1': 7.58,
                   'NC(=O)CC[C@H](N)C(=O)O': 3.32,
                   'CC[C@@H](N)C(=O)O': 9.23,
@@ -941,6 +943,7 @@ class Ui_Mainwindow(object):
         smi_enter2 = self.InsertSMILESscatter.text()
         mol_enter2 = Chem.MolFromSmiles(smi_enter2)
         smi2 = Chem.MolToSmiles(mol_enter2)
+        print(smi2)
         exp = exp_rt[smi2]
         pred_rt = {'Cn1cnc(C[C@H](N)C(=O)O)c1': 7.97,
                    'NCCCN': [3.91, 18.96],
@@ -1023,7 +1026,7 @@ class Ui_Mainwindow(object):
                    'CC[C@@H](C)[C@H](N)C(=O)O': 13.63,
                    'N[C@@H](CS)C(=O)O': 10.16,
                    'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 3.36,
-                   'CNC[C@H](O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
+                   'CNCC(O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
                    'Nc1ccnc(=O)[nH]1': 9.33,
                    'NC(=O)CC[C@H](N)C(=O)O': 5.94,
                    'CC[C@@H](N)C(=O)O': 9.67,
@@ -1308,7 +1311,7 @@ class Ui_Mainwindow(object):
                       'CC[C@@H](C)[C@H](N)C(=O)O': './Dnspng/L-Alloisoleucine.png',
                       'N[C@@H](CS)C(=O)O': './Dnspng/Cysteine.png',
                       'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': './Dnspng/Glucosamine_6-sulfate.png',
-                      'CNC[C@H](O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
+                      'CNCC(O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
                                                     './Dnspng/Epinephrine_Isomer2.png'],
                       'Nc1ccnc(=O)[nH]1': './Dnspng/Cytosine.png',
                       'NC(=O)CC[C@H](N)C(=O)O': './Dnspng/L-Glutamine.png',
@@ -1542,19 +1545,20 @@ class Ui_Mainwindow(object):
         ax = self.fig1.add_subplot(111)
 
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = 0.96', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.scatter(exp_df, pred_df, c="red", s=8)
-        ax.scatter(exp, pred, c="green", s=60)
+        ax.scatter(exp_df, pred_df, facecolors='none', edgecolors='black', s=8)
+        ax.scatter(exp, pred, c="black", marker='*', s=100)
 
         if type(pred) == list:
+            #텍스트가 뭉쳐있을 때는?
             for i, v in enumerate(exp):
-                ax.text(v, pred[i], (v, pred[i]), color='blue', weight='bold', fontsize=15,
+                ax.text(v, pred[i], (v, pred[i]), color='black', weight='bold', fontsize=15,
                         horizontalalignment='center', verticalalignment='bottom')
         else:
-            ax.text(exp, pred, (exp, pred), color='blue', weight='bold', fontsize=15,
+            ax.text(exp, pred, (exp, pred), color='black', weight='bold', fontsize=15,
                     horizontalalignment='center', verticalalignment='bottom')
         if type(Dns_struct[smi2]) == list:
             paths = Dns_struct[smi2]
@@ -1589,7 +1593,7 @@ class Ui_Mainwindow(object):
 
         self.canvas1.draw()
 
-        cursor = mplcursors.cursor(ax.scatter(exp_df, pred_df, c="red", s=8), hover=True)
+        cursor = mplcursors.cursor(ax.scatter(exp_df, pred_df, facecolors='none', edgecolors='black', s=8), hover=True)
         cursor.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
     def findpredrt(self):
