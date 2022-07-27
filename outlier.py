@@ -27,14 +27,19 @@ def outliers_iqr(data):
 
 
 outlier_index = outliers_iqr(Residual)[0]
-print(outlier_index[0])
+#print(outlier_index[0])
 outlier1 = df['Dns_SMILES'][outlier_index[0]]
-print(outlier1)
+#print(outlier1)
 #print(len(outlier_index))
 
-# df_1 = df.drop(outlier_index, axis=0)
-# X1 = df_1['Experimental_RT']
-# y1 = df_1['Predicted_RT']
+df_1 = df.drop(outlier_index, axis=0)
+X1 = df_1['Experimental_RT']
+y1 = df_1['Predicted_RT']
 #
 # plt.scatter(X1, y1)
 # plt.show()
+
+ols_model = sm.OLS(y1, X1)
+ols_results = ols_model.fit()
+
+print(ols_results.summary())

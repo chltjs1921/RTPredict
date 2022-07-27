@@ -659,6 +659,7 @@ class Ui_Mainwindow(object):
         cursor.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
     def specific(self):  # 업데이트된 그래프 띄우기. 텍스트 창이 비어있으면 채우라고 메시지 띄우기
+        # 키 값을 하나로 통일할 것. smi>키
         # 마우스 커서 혹은 그거와 상관없이 특정 값 좌표 띄우기
         # Dns화 된 이미지도 같이 띄우기>>특정 Dns. Dns 그림 원본을 작고 선명하게 바꾸기
         total = pd.read_csv("RT_predict_confirm.csv")
@@ -1568,7 +1569,7 @@ class Ui_Mainwindow(object):
             
         else:
             x0 = [6, 15, 24]
-            y0 = [17, 25, 10]
+            y0 = [20, 25, 10]
             for i in range(len(paths)):
                 im = plt.imread(paths[i], format='png')
                 im2 = OffsetImage(im, zoom=1)
