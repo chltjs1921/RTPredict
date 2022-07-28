@@ -167,11 +167,12 @@ class Ui_Mainwindow(object):
         self.DrawStructure.setObjectName("DrawStructure")
         self.verticalLayout.addWidget(self.DrawStructure)
         self.Sketcher = QtWebEngineWidgets.QWebEngineView(self.centralwidget)
-        self.Sketcher.setMinimumSize(QtCore.QSize(800, 560))
-        self.Sketcher.setSizeIncrement(QtCore.QSize(0, 0))
+        self.Sketcher.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding))
+        self.Sketcher.setSizeIncrement(QtCore.QSize(1, 1))
         self.Sketcher.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.Sketcher.setAutoFillBackground(True)
-        self.Sketcher.setUrl(QtCore.QUrl("http://www.chemspider.com/StructureSearch.aspx"))
+        self.Sketcher.setUrl(QtCore.QUrl("https://pubchem.ncbi.nlm.nih.gov//edit3/index.html"))
+        self.Sketcher.adjustSize()
         self.Sketcher.setZoomFactor(1)
         self.Sketcher.setObjectName("Sketcher")
         self.verticalLayout.addWidget(self.Sketcher)
@@ -662,13 +663,13 @@ class Ui_Mainwindow(object):
 
         ax = self.fig1.subplots()
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8)
-        ax.scatter(exp_df_test, pred_df_test, color='black', s=8)
-        ax.plot(exp_df_train, p(exp_df_train), color='black')
+        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
+        ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
+        ax.plot(exp_df_train, p(exp_df_train), color='black', linewidth=2, linestyle='--')
         # 아웃라이어 제거. 그 후 무엇이 아웃라이어인지 명시할 것(논문과 프로그램 양쪽)
         # 프로그램은 메시지박스. 논문은 글로 써서 명시
         ax.set_xlim(0, 30)
@@ -684,10 +685,11 @@ class Ui_Mainwindow(object):
 
         self.canvas1.draw()
 
-        cursor1 = mplcursors.cursor(ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8), hover=True)
+        cursor1 = mplcursors.cursor(ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8),
+                                    hover=True)
         cursor1.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
-        cursor2 = mplcursors.cursor(ax.scatter(exp_df_test, pred_df_test, color='black', s=8), hover=True)
+        cursor2 = mplcursors.cursor(ax.scatter(exp_df_test, pred_df_test, color='blue', s=8), hover=True)
         cursor2.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
     def specific(self):  # 업데이트된 그래프 띄우기. 텍스트 창이 비어있으면 채우라고 메시지 띄우기
@@ -1565,7 +1567,7 @@ class Ui_Mainwindow(object):
 
         outlier_index = outliers_iqr(Residual)[0]
 
-        df = total.drop(outlier_index, axis=0).reset_index(drop=True)
+        df = total.drop(outlier_index, axis=0)
         df_train = df.loc[
                    [166, 169, 168, 162, 201, 159, 76, 6, 95, 16, 54, 34, 27, 1, 25, 243, 143, 43, 104, 182, 10, 248,
                     188, 100, 309, 271, 254, 212, 213, 48, 106, 172, 136, 28, 49, 119, 264, 146, 51, 42, 131, 14, 91,
@@ -1600,22 +1602,24 @@ class Ui_Mainwindow(object):
         ax = self.fig1.add_subplot(111)
 
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8)
-        ax.scatter(exp_df_test, pred_df_test, color='black', s=8)
-        ax.plot(exp_df_train, p(exp_df_train), color='black')
-        ax.scatter(exp, pred, c="black", marker='*', s=100)
+        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
+        ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
+        ax.plot(exp_df_train, p(exp_df_train), color='black', linewidth=2, linestyle='--')
+        ax.scatter(exp, pred, marker='*', color='orange', s=150)
 
         if type(pred) == list:
             # 텍스트가 뭉쳐있을 때는?
+            x = [5, 11, 20]
+            y = [25, 28, 8]
             for i, v in enumerate(exp):
-                ax.text(v, pred[i], (v, pred[i]), color='black', weight='bold', fontsize=15,
+                ax.text(x[i], y[i], (v, pred[i]), color='black', weight='bold', fontsize=15,
                         horizontalalignment='center', verticalalignment='bottom')
         else:
-            ax.text(exp, pred, (exp, pred), color='black', weight='bold', fontsize=15,
+            ax.text(5, 25, (exp, pred), color='black', weight='bold', fontsize=15,
                     horizontalalignment='center', verticalalignment='bottom')
         if type(Dns_struct[smi2]) == list:
             paths = Dns_struct[smi2]
@@ -1629,8 +1633,8 @@ class Ui_Mainwindow(object):
             ax.add_artist(ab)
 
         else:
-            x0 = [6, 15, 24]
-            y0 = [20, 25, 10]
+            x0 = [5, 15, 25]
+            y0 = [18, 25, 10]
             for i in range(len(paths)):
                 im = plt.imread(paths[i], format='png')
                 im2 = OffsetImage(im, zoom=1)
@@ -1650,8 +1654,12 @@ class Ui_Mainwindow(object):
 
         self.canvas1.draw()
 
-        cursor = mplcursors.cursor(ax.scatter(exp_df, pred_df, facecolors='none', edgecolors='black', s=8), hover=True)
-        cursor.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
+        cursor1 = mplcursors.cursor(ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8),
+                                    hover=True)
+        cursor1.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
+
+        cursor2 = mplcursors.cursor(ax.scatter(exp_df_test, pred_df_test, color='black', s=8), hover=True)
+        cursor2.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
     def findpredrt(self):
         pred_rt_name = {'1-Methylhistidine': 7.97,
