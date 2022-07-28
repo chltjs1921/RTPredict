@@ -621,12 +621,37 @@ class Ui_Mainwindow(object):
 
         outlier_index = outliers_iqr(Residual)[0]
 
-        df = total.drop(outlier_index, axis=0).reset_index(drop=True)
+        df = total.drop(outlier_index, axis=0)
+        df_train = df.loc[
+                   [166, 169, 168, 162, 201, 159, 76, 6, 95, 16, 54, 34, 27, 1, 25, 243, 143, 43, 104, 182, 10, 248,
+                    188, 100, 309, 271, 254, 212, 213, 48, 106, 172, 136, 28, 49, 119, 264, 146, 51, 42, 131, 14, 91,
+                    29, 84, 181, 96, 44, 24, 242, 79, 279, 155, 118, 9, 219, 234, 39, 99, 207, 69, 205, 297, 190, 206,
+                    98, 147, 264, 70, 251, 20, 35, 85, 294, 200, 68, 224, 81, 284, 117, 223, 295, 290, 29, 311, 111,
+                    246, 36, 231, 41, 113, 57, 40, 296, 197, 134, 138, 160, 289, 148, 280, 130, 112, 110, 13, 127, 277,
+                    216, 282, 71, 312, 238, 137, 165, 239, 229, 192, 256, 203, 178, 276, 211, 163, 222, 38, 121, 286,
+                    45, 270, 93, 61, 11, 82, 18, 109, 115, 72, 83, 267, 293, 225, 19, 195, 149, 291, 80, 50, 179, 94,
+                    177, 123, 298, 13, 125, 263, 208, 173, 236, 299, 193, 184, 196, 214, 308, 287, 105, 232, 313, 153,
+                    77, 187, 191, 103, 23, 273, 53, 272, 151, 78, 233, 3, 31, 89, 47, 140, 89, 58, 73, 227, 220, 139,
+                    180, 86, 215, 62, 209, 266, 244, 268, 302, 90, 2, 259, 301, 245, 170, 67, 283, 122, 189, 278, 204,
+                    269, 176, 167, 198, 199, 37, 304, 300, 157, 192, 307, 303, 161, 75, 288, 306, 257, 292, 185, 186,
+                    218, 32, 183, 154, 226, 102, 265, 141, 202], :]
+        df_test = df.loc[[228, 59, 92, 142, 17, 252, 135, 175, 7, 116, 156, 65, 8, 144, 97, 15, 152, 310, 21, 52, 12,
+                          132, 35, 101, 63, 133, 56, 258, 255, 124, 275, 107, 281, 108, 250, 235, 221, 66, 164, 22,
+                          158, 240, 261, 262, 241, 247, 171, 314, 33, 120, 55, 126, 217, 60, 26, 5, 305, 74, 129], :]
 
-        #train과 test 나눠서 scatter 그리기
+        # train과 test 나눠서 scatter 그리기
 
         exp_df = df['Experimental_RT']
         pred_df = df['Predicted_RT']
+
+        exp_df_train = df_train['Experimental_RT']
+        pred_df_train = df_train['Predicted_RT']
+
+        z = np.polyfit(exp_df_train, pred_df_train, 1)
+        p = np.poly1d(z)
+
+        exp_df_test = df_test['Experimental_RT']
+        pred_df_test = df_test['Predicted_RT']
 
         outlier_list = ['1-Methylhistidine', 'Iodotyrosine', 'L-Histidine', '3-methyl-histidine', 'Hippuric acid',
                         'Xanthurenic acid', '2-aminooctanoic acid', '3-Hydroxyanthranilic acid', 'Caffeic acid',
@@ -637,11 +662,13 @@ class Ui_Mainwindow(object):
 
         ax = self.fig1.subplots()
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(15, 3, 'Adjusted R square = 0.96', color='blue', weight='bold', fontsize=15,
+        ax.text(15, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.scatter(exp_df, pred_df, c="red", s=8)
+        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8)
+        ax.scatter(exp_df_test, pred_df_test, color='black', s=8)
+        ax.plot(exp_df_train, p(exp_df_train), color='black')
         # 아웃라이어 제거. 그 후 무엇이 아웃라이어인지 명시할 것(논문과 프로그램 양쪽)
         # 프로그램은 메시지박스. 논문은 글로 써서 명시
         ax.set_xlim(0, 30)
@@ -657,8 +684,11 @@ class Ui_Mainwindow(object):
 
         self.canvas1.draw()
 
-        cursor = mplcursors.cursor(ax.scatter(exp_df, pred_df, c="red", s=8), hover=True)
-        cursor.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
+        cursor1 = mplcursors.cursor(ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8), hover=True)
+        cursor1.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
+
+        cursor2 = mplcursors.cursor(ax.scatter(exp_df_test, pred_df_test, color='black', s=8), hover=True)
+        cursor2.connect("add", lambda sel: sel.annotation.set_text('{}, {}'.format(sel.target[0], sel.target[1])))
 
     def specific(self):  # 업데이트된 그래프 띄우기. 텍스트 창이 비어있으면 채우라고 메시지 띄우기
         # 키 값을 하나로 통일할 것. smi>키
@@ -1312,7 +1342,7 @@ class Ui_Mainwindow(object):
                       'N[C@@H](CS)C(=O)O': './Dnspng/Cysteine.png',
                       'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': './Dnspng/Glucosamine_6-sulfate.png',
                       'CNCC(O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
-                                                    './Dnspng/Epinephrine_Isomer2.png'],
+                                                './Dnspng/Epinephrine_Isomer2.png'],
                       'Nc1ccnc(=O)[nH]1': './Dnspng/Cytosine.png',
                       'NC(=O)CC[C@H](N)C(=O)O': './Dnspng/L-Glutamine.png',
                       'CC[C@@H](N)C(=O)O': './Dnspng/D-Alpha-aminobutyric_acid.png',
@@ -1536,9 +1566,34 @@ class Ui_Mainwindow(object):
         outlier_index = outliers_iqr(Residual)[0]
 
         df = total.drop(outlier_index, axis=0).reset_index(drop=True)
+        df_train = df.loc[
+                   [166, 169, 168, 162, 201, 159, 76, 6, 95, 16, 54, 34, 27, 1, 25, 243, 143, 43, 104, 182, 10, 248,
+                    188, 100, 309, 271, 254, 212, 213, 48, 106, 172, 136, 28, 49, 119, 264, 146, 51, 42, 131, 14, 91,
+                    29, 84, 181, 96, 44, 24, 242, 79, 279, 155, 118, 9, 219, 234, 39, 99, 207, 69, 205, 297, 190, 206,
+                    98, 147, 264, 70, 251, 20, 35, 85, 294, 200, 68, 224, 81, 284, 117, 223, 295, 290, 29, 311, 111,
+                    246, 36, 231, 41, 113, 57, 40, 296, 197, 134, 138, 160, 289, 148, 280, 130, 112, 110, 13, 127, 277,
+                    216, 282, 71, 312, 238, 137, 165, 239, 229, 192, 256, 203, 178, 276, 211, 163, 222, 38, 121, 286,
+                    45, 270, 93, 61, 11, 82, 18, 109, 115, 72, 83, 267, 293, 225, 19, 195, 149, 291, 80, 50, 179, 94,
+                    177, 123, 298, 13, 125, 263, 208, 173, 236, 299, 193, 184, 196, 214, 308, 287, 105, 232, 313, 153,
+                    77, 187, 191, 103, 23, 273, 53, 272, 151, 78, 233, 3, 31, 89, 47, 140, 89, 58, 73, 227, 220, 139,
+                    180, 86, 215, 62, 209, 266, 244, 268, 302, 90, 2, 259, 301, 245, 170, 67, 283, 122, 189, 278, 204,
+                    269, 176, 167, 198, 199, 37, 304, 300, 157, 192, 307, 303, 161, 75, 288, 306, 257, 292, 185, 186,
+                    218, 32, 183, 154, 226, 102, 265, 141, 202], :]
+        df_test = df.loc[[228, 59, 92, 142, 17, 252, 135, 175, 7, 116, 156, 65, 8, 144, 97, 15, 152, 310, 21, 52, 12,
+                          132, 35, 101, 63, 133, 56, 258, 255, 124, 275, 107, 281, 108, 250, 235, 221, 66, 164, 22,
+                          158, 240, 261, 262, 241, 247, 171, 314, 33, 120, 55, 126, 217, 60, 26, 5, 305, 74, 129], :]
 
         exp_df = df['Experimental_RT']
         pred_df = df['Predicted_RT']
+
+        exp_df_train = df_train['Experimental_RT']
+        pred_df_train = df_train['Predicted_RT']
+
+        z = np.polyfit(exp_df_train, pred_df_train, 1)
+        p = np.poly1d(z)
+
+        exp_df_test = df_test['Experimental_RT']
+        pred_df_test = df_test['Predicted_RT']
 
         self.fig1.clear()
 
@@ -1549,11 +1604,13 @@ class Ui_Mainwindow(object):
                 horizontalalignment='center', verticalalignment='bottom')
         ax.text(15, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.scatter(exp_df, pred_df, facecolors='none', edgecolors='black', s=8)
+        ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=8)
+        ax.scatter(exp_df_test, pred_df_test, color='black', s=8)
+        ax.plot(exp_df_train, p(exp_df_train), color='black')
         ax.scatter(exp, pred, c="black", marker='*', s=100)
 
         if type(pred) == list:
-            #텍스트가 뭉쳐있을 때는?
+            # 텍스트가 뭉쳐있을 때는?
             for i, v in enumerate(exp):
                 ax.text(v, pred[i], (v, pred[i]), color='black', weight='bold', fontsize=15,
                         horizontalalignment='center', verticalalignment='bottom')
@@ -1570,7 +1627,7 @@ class Ui_Mainwindow(object):
             im2 = OffsetImage(im, zoom=1)
             ab = AnnotationBbox(im2, (7, 20), frameon=False)
             ax.add_artist(ab)
-            
+
         else:
             x0 = [6, 15, 24]
             y0 = [20, 25, 10]
