@@ -678,9 +678,9 @@ class Ui_Mainwindow(object):
         ax.axes.yaxis.set_major_locator(ticker.MultipleLocator(5))
         ax.axes.xaxis.set_minor_locator(ticker.MultipleLocator(1))
         ax.axes.yaxis.set_minor_locator(ticker.MultipleLocator(1))
-        ax.set_xlabel("Normalized RT")
+        ax.set_xlabel("Experimental RT")
         ax.set_ylabel("Predicted RT")
-        ax.set_title("Normalized RT vs Predicted RT")
+        ax.set_title("Experimental RT vs Predicted RT")
         self.fig1.tight_layout()
 
         self.canvas1.draw()
@@ -1631,15 +1631,19 @@ class Ui_Mainwindow(object):
             im2 = OffsetImage(im, zoom=1)
             ab = AnnotationBbox(im2, (7, 20), frameon=False)
             ax.add_artist(ab)
+            ax.annotate('', xytext=(7, 15), xy=(exp, pred),
+                        arrowprops={'facecolor': 'black', 'edgecolor': 'black', 'headwidth': 5, 'width': 0.5})
 
         else:
             x0 = [5, 15, 25]
-            y0 = [18, 25, 10]
+            y0 = [18, 23, 10]
             for i in range(len(paths)):
                 im = plt.imread(paths[i], format='png')
                 im2 = OffsetImage(im, zoom=1)
                 ab = AnnotationBbox(im2, (x0[i], y0[i]), frameon=False)
                 ax.add_artist(ab)
+                ax.annotate('', xytext=(x0[i]-3, y0[i]-5), xy=(exp[i], pred[i]),
+                            arrowprops={'facecolor': 'black', 'edgecolor': 'black', 'headwidth': 5, 'width': 0.5})
 
         ax.set_xlim(0, 30)
         ax.set_ylim(0, 30)
@@ -1647,9 +1651,9 @@ class Ui_Mainwindow(object):
         ax.axes.yaxis.set_major_locator(ticker.MultipleLocator(5))
         ax.axes.xaxis.set_minor_locator(ticker.MultipleLocator(1))
         ax.axes.yaxis.set_minor_locator(ticker.MultipleLocator(1))
-        ax.set_xlabel("Normalized RT")
+        ax.set_xlabel("Experimental RT")
         ax.set_ylabel("Predicted RT")
-        ax.set_title("Normalized RT vs Predicted RT")
+        ax.set_title("Experimental RT vs Predicted RT")
         self.fig1.tight_layout()
 
         self.canvas1.draw()
