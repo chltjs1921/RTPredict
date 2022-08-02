@@ -659,6 +659,8 @@ class Ui_Mainwindow(object):
                         'Cadaverine', 'Naringenin', 'Oxidized glutathione', 'L-Histidinol', 'Alanyl-Histidine',
                         'Histidinyl-Alanine']
 
+        # 메시지 상자 띄워서 아웃라이어 명시
+
         self.fig1.clear()
 
         ax = self.fig1.subplots()
@@ -678,9 +680,9 @@ class Ui_Mainwindow(object):
         ax.axes.yaxis.set_major_locator(ticker.MultipleLocator(5))
         ax.axes.xaxis.set_minor_locator(ticker.MultipleLocator(1))
         ax.axes.yaxis.set_minor_locator(ticker.MultipleLocator(1))
-        ax.set_xlabel("Normalized RT")
+        ax.set_xlabel("Experimental RT")
         ax.set_ylabel("Predicted RT")
-        ax.set_title("Normalized RT vs Predicted RT")
+        ax.set_title("Experimental RT vs Predicted RT")
         self.fig1.tight_layout()
 
         self.canvas1.draw()
@@ -780,7 +782,7 @@ class Ui_Mainwindow(object):
                   'CC[C@@H](C)[C@H](N)C(=O)O': 13.20,
                   'N[C@@H](CS)C(=O)O': 14.12,
                   'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 1.79,
-                  'CN[C@H](O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
+                  'CNC[C@H](O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
                   'Nc1ccnc(=O)[nH]1': 7.58,
                   'NC(=O)CC[C@H](N)C(=O)O': 3.32,
                   'CC[C@@H](N)C(=O)O': 9.23,
@@ -1058,7 +1060,7 @@ class Ui_Mainwindow(object):
                    'CC[C@@H](C)[C@H](N)C(=O)O': 13.63,
                    'N[C@@H](CS)C(=O)O': 10.16,
                    'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 3.36,
-                   'CN[C@H](O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
+                   'CNC[C@H](O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
                    'Nc1ccnc(=O)[nH]1': 9.33,
                    'NC(=O)CC[C@H](N)C(=O)O': 5.94,
                    'CC[C@@H](N)C(=O)O': 9.67,
@@ -1343,7 +1345,7 @@ class Ui_Mainwindow(object):
                       'CC[C@@H](C)[C@H](N)C(=O)O': './Dnspng/L-Alloisoleucine.png',
                       'N[C@@H](CS)C(=O)O': './Dnspng/Cysteine.png',
                       'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': './Dnspng/Glucosamine_6-sulfate.png',
-                      'CN[C@H](O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
+                      'CNC[C@H](O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
                                                 './Dnspng/Epinephrine_Isomer2.png'],
                       'Nc1ccnc(=O)[nH]1': './Dnspng/Cytosine.png',
                       'NC(=O)CC[C@H](N)C(=O)O': './Dnspng/L-Glutamine.png',
@@ -1613,14 +1615,12 @@ class Ui_Mainwindow(object):
 
         if type(pred) == list:
             # 텍스트가 뭉쳐있을 때는?
-            x = [5, 11, 20]
-            y = [25, 28, 8]
+            x = [5, 10, 19]
+            y = [24, 28, 11]
             for i, v in enumerate(exp):
-                ax.text(x[i], y[i], (v, pred[i]), color='black', weight='bold', fontsize=15,
-                        horizontalalignment='center', verticalalignment='bottom')
+                ax.annotate('(%.2f, %.2f)' % (v, pred[i]), xy=(x[i], y[i]), fontsize=15)
         else:
-            ax.text(5, 25, (exp, pred), color='black', weight='bold', fontsize=15,
-                    horizontalalignment='center', verticalalignment='bottom')
+            ax.annotate('(%.2f, %.2f)' % (exp, pred), xy=(5, 24))
         if type(Dns_struct[smi2]) == list:
             paths = Dns_struct[smi2]
         else:
@@ -1631,15 +1631,21 @@ class Ui_Mainwindow(object):
             im2 = OffsetImage(im, zoom=1)
             ab = AnnotationBbox(im2, (7, 20), frameon=False)
             ax.add_artist(ab)
+            ax.annotate('', xytext=(7, 15), xy=(exp, pred),
+                        arrowprops={'facecolor': 'black', 'edgecolor': 'black', 'headwidth': 5, 'width': 0.5})
 
         else:
             x0 = [5, 15, 25]
-            y0 = [18, 25, 10]
+            y0 = [18, 24, 10]
+            x01 = [5, 12, 24]
+            y01 = [13, 18, 10]
             for i in range(len(paths)):
                 im = plt.imread(paths[i], format='png')
                 im2 = OffsetImage(im, zoom=1)
                 ab = AnnotationBbox(im2, (x0[i], y0[i]), frameon=False)
                 ax.add_artist(ab)
+                ax.annotate('', xytext=(x01[i], y01[i]), xy=(exp[i], pred[i]),
+                            arrowprops={'facecolor': 'black', 'edgecolor': 'black', 'headwidth': 5, 'width': 0.5})
 
         ax.set_xlim(0, 30)
         ax.set_ylim(0, 30)
@@ -1647,9 +1653,9 @@ class Ui_Mainwindow(object):
         ax.axes.yaxis.set_major_locator(ticker.MultipleLocator(5))
         ax.axes.xaxis.set_minor_locator(ticker.MultipleLocator(1))
         ax.axes.yaxis.set_minor_locator(ticker.MultipleLocator(1))
-        ax.set_xlabel("Normalized RT")
+        ax.set_xlabel("Experimental RT")
         ax.set_ylabel("Predicted RT")
-        ax.set_title("Normalized RT vs Predicted RT")
+        ax.set_title("Experimental RT vs Predicted RT")
         self.fig1.tight_layout()
 
         self.canvas1.draw()
@@ -2067,14 +2073,14 @@ class Ui_Mainwindow(object):
                         'Hypotaurine': 4.89,
                         '5-Methylcytidine': [4.51, 5.28],
                         '2-aminooctanoic acid': 14.90,
-                        '2\'-Deoxyguanosine 5\'-monophosphate': 4.15,
+                        "2'-Deoxyguanosine 5'-monophosphate": 4.15,
                         'Gamma-Glutamylcysteine': 8.63,
                         '2-Hydroxyphenethlamine': [12.84, 13.16],
                         '2-Phenylaminoadenosine': 7.45,
                         '2-Aminobenzoic acid': 14.52,
                         '5-Aminolevulinic acid': 8.35,
                         '4-Aminophenol': [15.74, 25.02],
-                        '5\'-Methylthioadenosine': 8.38,
+                        "5'-Methylthioadenosine": 8.38,
                         'dCMP': 4.07,
                         '4-Nitrophenol': 23.91,
                         'N-Acetylserotonin': 14.05,
@@ -2389,14 +2395,14 @@ class Ui_Mainwindow(object):
                         'Hypotaurine': 4.89,
                         '5-Methylcytidine': [4.51, 5.28],
                         '2-aminooctanoic acid': 14.90,
-                        '2\'-Deoxyguanosine 5\'-monophosphate': 4.15,
+                        "2'-Deoxyguanosine 5'-monophosphate": 4.15,
                         'Gamma-Glutamylcysteine': 8.63,
                         '2-Hydroxyphenethlamine': [12.84, 13.16],
                         '2-Phenylaminoadenosine': 7.45,
                         '2-Aminobenzoic acid': 14.52,
                         '5-Aminolevulinic acid': 8.35,
                         '4-Aminophenol': [15.74, 25.02],
-                        '5\'-Methylthioadenosine': 8.38,
+                        "5'-Methylthioadenosine": 8.38,
                         'dCMP': 4.07,
                         '4-Nitrophenol': 23.91,
                         'N-Acetylserotonin': 14.05,
@@ -2570,7 +2576,7 @@ class Ui_Mainwindow(object):
             return totalRT[idx]
 
         rt_key = find_nearest(TotalRT, f1(float(rt)))  # 가장 근접한 값 찾기. 이것을 key값으로 하기
-        RT_pred = str(rt_key)
+        RT_pred = str(np.round(f1(float(rt)), 2))
         self.fittingresult.setText(RT_pred)
         self.fittingresult.setAlignment(QtCore.Qt.AlignCenter)
 
