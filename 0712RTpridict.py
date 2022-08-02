@@ -663,9 +663,9 @@ class Ui_Mainwindow(object):
 
         ax = self.fig1.subplots()
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 4, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 2, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
         ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
@@ -1602,9 +1602,9 @@ class Ui_Mainwindow(object):
         ax = self.fig1.add_subplot(111)
 
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 4, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 2, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
         ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
