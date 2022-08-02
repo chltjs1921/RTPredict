@@ -663,9 +663,9 @@ class Ui_Mainwindow(object):
 
         ax = self.fig1.subplots()
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 4, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 2, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
         ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
@@ -780,7 +780,7 @@ class Ui_Mainwindow(object):
                   'CC[C@@H](C)[C@H](N)C(=O)O': 13.20,
                   'N[C@@H](CS)C(=O)O': 14.12,
                   'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 1.79,
-                  'CNCC(O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
+                  'CN[C@H](O)c1ccc(O)c(O)c1': [6.19, 7.20, 8.59],
                   'Nc1ccnc(=O)[nH]1': 7.58,
                   'NC(=O)CC[C@H](N)C(=O)O': 3.32,
                   'CC[C@@H](N)C(=O)O': 9.23,
@@ -1058,7 +1058,7 @@ class Ui_Mainwindow(object):
                    'CC[C@@H](C)[C@H](N)C(=O)O': 13.63,
                    'N[C@@H](CS)C(=O)O': 10.16,
                    'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': 3.36,
-                   'CNCC(O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
+                   'CN[C@H](O)c1ccc(O)c(O)c1': [9.16, 8.85, 9.19],
                    'Nc1ccnc(=O)[nH]1': 9.33,
                    'NC(=O)CC[C@H](N)C(=O)O': 5.94,
                    'CC[C@@H](N)C(=O)O': 9.67,
@@ -1343,7 +1343,7 @@ class Ui_Mainwindow(object):
                       'CC[C@@H](C)[C@H](N)C(=O)O': './Dnspng/L-Alloisoleucine.png',
                       'N[C@@H](CS)C(=O)O': './Dnspng/Cysteine.png',
                       'N[C@H]1[C@H](O)O[C@H](COS(=O)(=O)O)[C@@H](O)[C@@H]1O': './Dnspng/Glucosamine_6-sulfate.png',
-                      'CNCC(O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
+                      'CN[C@H](O)c1ccc(O)c(O)c1': ['./Dnspng/Epinephrine.png', './Dnspng/Epinephrine_Isomer1.png',
                                                 './Dnspng/Epinephrine_Isomer2.png'],
                       'Nc1ccnc(=O)[nH]1': './Dnspng/Cytosine.png',
                       'NC(=O)CC[C@H](N)C(=O)O': './Dnspng/L-Glutamine.png',
@@ -1602,9 +1602,9 @@ class Ui_Mainwindow(object):
         ax = self.fig1.add_subplot(111)
 
         # 그래프 사이즈 캔버스에 맞게 조정
-        ax.text(13, 5, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
+        ax.text(13, 4, 'y = 0.87 * x + 1.79', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
-        ax.text(13, 3, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
+        ax.text(13, 2, 'Adjusted R square = 0.96', color='black', weight='bold', fontsize=15,
                 horizontalalignment='center', verticalalignment='bottom')
         ax.scatter(exp_df_train, pred_df_train, facecolors='none', edgecolors='black', s=20)
         ax.scatter(exp_df_test, pred_df_test, color='blue', s=20)
@@ -1942,7 +1942,7 @@ class Ui_Mainwindow(object):
             pred_rt_value.append(pred_rt)
         # 리스트 값을 입력하기
         for i in range(0, standarddata):
-            self.Fittable.setItem(i, 2, QtWidgets.QTableWifdgetItem(str(pred_rt_value[i])))
+            self.Fittable.setItem(i, 2, QtWidgets.QTableWidgetItem(str(pred_rt_value[i])))
             self.Fittable.item(i, 2).setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
     def bringfit(self):  # 표에 입력된 값 가져오고 피팅
