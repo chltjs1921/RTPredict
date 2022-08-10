@@ -32,6 +32,10 @@ class Ui_Mainwindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName("tabWidget")
+        self.RTpredict = QtWidgets.QWidget(self.centralwidget)
+        self.tabWidget.addTab(self.RTpredict, "Retentiontimepredict")
         self.RTscatter = QtWidgets.QWidget(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
@@ -179,6 +183,8 @@ class Ui_Mainwindow(object):
         self.gridLayout_2.addLayout(self.verticalLayout, 0, 0, 2, 2)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.RTfitting = QtWidgets.QWidget(self.centralwidget)
+        self.tabWidget.addTab(self.RTfitting, "Retentiontimefit")
         self.FindpredRT = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -229,9 +235,10 @@ class Ui_Mainwindow(object):
         self.Fittable.setRowCount(6)
         self.Fittable.setColumnCount(3)
         self.Fittable.setEditTriggers(QtWidgets.QAbstractItemView.AllEditTriggers)  # 셀 수정 가능하게 변경
-        self.Fittable.setHorizontalHeaderLabels(["Metabolite", "Standard RT", "Predicted RT"])
-        self.Fittable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.Fittable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.Fittable.setHorizontalHeaderLabels(["Metabolite", "Your experimental RT", "Predicted RT"])
+        self.Fittable.resizeColumnsToContents()
+        self.Fittable.resizeRowToContents(6)
+        self.Fittable.horizontalHeader().setStretchLastSection(True)
         self.Fittable.setObjectName("Fittable")
         self.gridLayout_2.addWidget(self.Fittable, 4, 0, 1, 1)
         self.gridLayout_3 = QtWidgets.QGridLayout()
@@ -662,10 +669,11 @@ class Ui_Mainwindow(object):
         exp_df_test = df_test['Experimental_RT']
         pred_df_test = df_test['Predicted_RT']
 
-        outlier_list = ['1-Methylhistidine', 'Iodotyrosine', 'L-Histidine', '3-methyl-histidine', 'Hippuric acid',
-                        'Xanthurenic acid', '2-aminooctanoic acid', '3-Hydroxyanthranilic acid', 'Caffeic acid',
-                        'Cadaverine', 'Naringenin', 'Oxidized glutathione', 'L-Histidinol', 'Alanyl-Histidine',
-                        'Histidinyl-Alanine']
+        outlier_list = ['3-methyl-histidine', 'L-Histidinol', '1-Methylhistidine', 'L-Histidine', 'Histidinyl-Alanine',
+                        'Hippuric acid', 'Alanyl-Histidine', '3-Hydroxyanthranilic acid', 'Xanthurenic acid',
+                        'Oxidized glutathione', '2-aminooctanoic acid', 'Cadaverine', 'Caffeic acid', 'Iodotyrosine',
+                        'Naringenin']
+        #다시 쓰기 #만일 아웃라이어 smi입력한다면?
 
         # 메시지 상자 띄워서 아웃라이어 명시
 
@@ -1961,7 +1969,7 @@ class Ui_Mainwindow(object):
             pred_rt_value.append(pred_rt)
         # 리스트 값을 입력하기
         for i in range(0, standarddata):
-            self.Fittable.setItem(i, 2, QtWidgets.QTableWidgetItem(str(pred_rt_value[i])))
+            self.Fittable.setItem(i, 2, QtWidgets.QTableWidgetItem(str(pred_rt_value[i]))) #float로 바꾸기
             self.Fittable.item(i, 2).setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
 
     def bringfit(self):  # 표에 입력된 값 가져오고 피팅
@@ -2251,22 +2259,20 @@ class Ui_Mainwindow(object):
                 original.append(pred_rt)
             predict = np.array(original)
 
-            def fit(A, B):
-                fp1 = np.polyfit(A, B, 1)
-                f1 = np.poly1d(fp1)  # 관계식 f1
-                return f1
+            z = np.polyfit(predict, standard, 1)
+            p = np.poly1d(z)
 
-            f1 = fit(standard, predict)  # fit 시킴
             x = np.arange(0, 31.01, 0.01)
 
             self.fig2.clear()
 
             ax = self.fig2.add_subplot(111)
-            ax.plot(x, f1(x), c="red", label='RT Fit function')
+            ax.plot(x, p(x), c="red", label='RT Fit function')
             ax.scatter(standard, predict, c="green", s=30, label='Standard fit')
             for i, v in enumerate(standard):
-                ax.text(v, predict[i], (v, predict[i]), color='blue', fontsize=10,
-                        horizontalalignment='center', verticalalignment='bottom')
+                ax.annotate('(%.2f, %.2f)' % (v, predict[i]), xy=(v, predict[i]), fontsize=10)
+                # ax.text(v, predict[i], (v, predict[i]), color='blue', fontsize=10,
+                #         horizontalalignment='center', verticalalignment='bottom')
             ax.set_xlim(0, 35)
             ax.set_ylim(0, 30)
             ax.grid()
@@ -2274,14 +2280,14 @@ class Ui_Mainwindow(object):
             ax.axes.yaxis.set_major_locator(ticker.MultipleLocator(5))
             ax.axes.xaxis.set_minor_locator(ticker.MultipleLocator(1))
             ax.axes.yaxis.set_minor_locator(ticker.MultipleLocator(1))
-            ax.set_xlabel("Experimental RT")
-            ax.set_ylabel("Predicted RT")
-            ax.set_title("Experimental RT vs Predicted RT")
+            ax.set_xlabel("Predicted RT")
+            ax.set_ylabel("Your experimental RT")
+            ax.set_title("Predicted RT vs Your experimental RT")
             self.fig2.tight_layout()
 
             self.canvas2.draw()
 
-            mplcursors.cursor(ax.plot(x, f1(x), c="red", label='RT Fit function'), hover=True)
+            mplcursors.cursor(ax.plot(x, p(x), c="red", label='RT Fit function'), hover=True)
             # fit 결과 그래프로 띄우기
         else:  # 데이터 입력하라고 창 띄우기. 근데 창이 안 뜸
             QtWidgets.QMessageBox.critical(Qt.qApp.activeWindow(), " ", "Please enter the data")
@@ -2578,7 +2584,7 @@ class Ui_Mainwindow(object):
                 f1 = np.poly1d(fp1)  # 관계식 f1
                 return f1
 
-            f1 = fit(standard, predict)  # fit 시킴
+            f1 = fit(predict, standard)  # fit 시킴
         total = pd.read_csv("RT_predict_confirm.csv")
         TotalRT = total['Predicted_RT']
         rt = self.enterRT.text()
@@ -2596,7 +2602,7 @@ class Ui_Mainwindow(object):
     def retranslateUi(self, Mainwindow):
         _translate = QtCore.QCoreApplication.translate
         Mainwindow.setWindowTitle(
-            _translate("Mainwindow", "AI predictor if LC retention time for dansylated urine metabolites"))
+            _translate("Mainwindow", "AI Predictor of LC Retention Time for Dansylated Metabolites"))
         self.SMILES.setText(_translate("Mainwindow", "SMILES:"))
         self.ApplySMILES.setText(_translate("Mainwindow", "Apply SMILES to predict retention time"))
         self.All.setText(_translate("Mainwindow", "Show all metabolites"))
@@ -2608,7 +2614,7 @@ class Ui_Mainwindow(object):
         self.FitRTstandard.setText(_translate("Mainwindow", "Fit retention time"))
         self.EnterRT.setText(_translate("Mainwindow", "Enter retention time"))
         self.EnterRTmin.setText(_translate("Mainwindow", "min"))
-        self.FitRTabove.setText(_translate("Mainwindow", "Fit retention time above"))
+        self.FitRTabove.setText(_translate("Mainwindow", "Calculate!"))
         self.FitRT.setText(_translate("Mainwindow", "Fitted retention time"))
         self.Fitrfmin.setText(_translate("Mainwindow", "min"))
 
